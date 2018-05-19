@@ -7,7 +7,7 @@ os: WMF 5
 
 # Skip on updates to the readme.
 skip_commits:
-  message: /updated readme.*/|update readme.*s/
+  message: /updated readme.*|update readme.*s/
 
 build: false
 

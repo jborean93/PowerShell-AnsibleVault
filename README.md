@@ -1,6 +1,7 @@
 # PowerShell-AnsibleVault
 
 [![Build status](https://ci.appveyor.com/api/projects/status/1jf9wurhryafa47o?svg=true)](https://ci.appveyor.com/project/jborean93/powershell-ansiblevault)
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/AnsibleVault.svg)](https://www.powershellgallery.com/packages/AnsibleVault)
 
 PowerShell module that allows you to encrypt and decrypt Ansible Vault files
 natively in Windows.
