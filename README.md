@@ -15,6 +15,9 @@ cmdlets that are added are
 * `Get-DecryptedAnsibleVault`
 * `Get-EncryptedAnsibleVault`
 
+I've also written a blog post around this at
+[Decrypting the secrets of Ansible Vault in PowerShell](https://www.bloggingforlogging.com/2018/05/20/decrypting-the-secrets-of-ansible-vault-in-powershell/).
+
 ### Get-DecryptedAnsibleVault
 
 Decrypt an Ansible Vault string and return the plaintext.
@@ -113,7 +116,34 @@ These cmdlets have the following requirements
 
 ## Installing
 
-TODO: fill out this information, once uploaded to the PowerShell gallery
+The easiest way to install this module is through
+[PowerShellGet](https://docs.microsoft.com/en-us/powershell/gallery/overview).
+This is installed by default with PowerShell 5 but can be added on PowerShell
+3 or 4 by installing the MSI [here](https://www.microsoft.com/en-us/download/details.aspx?id=51451).
+
+Once installed, you can install this module by running;
+
+```
+# Install for all users
+Install-Module -Name AnsibleVault
+
+# Install for only the current user
+Install-Module -Name AnsibleVault -Scope CurrentUser
+```
+
+If you wish to remove the module, just run
+`Uninstall-Module -Name AnsibleVault`.
+
+If you cannot use PowerShellGet, you can still install the module manually,
+here are some basic steps on how to do this;
+
+1. Download the latext zip from GitHub [here](https://github.com/jborean93/PowerShell-AnsibleVault/releases/latest)
+2. Extract the zip
+3. Copy the folder `AnsibleVault` inside the zip to a path that is set in `$env:PSModulePath`. By default this could be `C:\Program Files\WindowsPowerShell\Modules` or `C:\Users\<user>\Documents\WindowsPowerShell\Modules`
+4. Reopen PowerShell and unblock the downloaded files with `$path = (Get-Module -Name AnsibleVault -ListAvailable).ModuleBase; Unblock-File -Path $path\*.psd1; Unblock-File -Path $path\Public\*.ps1; Unblock-File -Path $path\Private\*.ps1`
+5. Reopen PowerShell one more time and you can start using the cmdlets
+
+_Note: You are not limited to installing the module to those example paths, you can add a new entry to the environment variable `PSModulePath` if you want to use another path._
 
 
 ## Examples
