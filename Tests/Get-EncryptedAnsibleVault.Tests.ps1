@@ -40,7 +40,7 @@ Describe "$module_name PS$ps_version tests" {
             $actual | Should -Not -Be $actual2
 
             $actual = Get-EncryptedAnsibleVault -Path $path -Password $password
-            $actual2 = Get-EncryptedAnsibleVault -Path $path -Password $password
+            $actual2 = Get-EncryptedAnsibleVault $path -Password $password
             $actual | Should -Not -Be $plaintext
             $actual | Should -BeLike '$ANSIBLE_VAULT;1.1;AES256*'
             $actual | Should -Not -Be $actual2
@@ -60,7 +60,7 @@ Describe "$module_name PS$ps_version tests" {
 
             # now repeat the above and specify the ID
             $actual = Get-EncryptedAnsibleVault -Path $path -Password $password -Id Prod
-            $actual2 = Get-EncryptedAnsibleVault -Path $path -Password $password -Id Prod
+            $actual2 = Get-EncryptedAnsibleVault $path -Password $password -Id Prod
             $actual | Should -Not -Be $plaintext
             $actual | Should -BeLike '$ANSIBLE_VAULT;1.2;AES256;Prod*'
             $actual | Should -Not -Be $actual2
@@ -81,6 +81,17 @@ Describe "$module_name PS$ps_version tests" {
             $dec_actual = $actual | Get-DecryptedAnsibleVault -Password $password
             # last actual was the string we specified, we can assert with the actual string to make sure
             $dec_actual | Should -Be $plaintext
+        }
+        It "Can encrypt a vault file in the pwd" {
+            $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+            $previous_pwd = (Get-Location).Path
+            Set-Location -Path $PSScriptRoot\Resources
+
+            $actual = Get-EncryptedAnsibleVault -Path "small_1.1.yml" -Password $password
+            Set-Location -Path $previous_pwd
+            $actual | Should -BeLike '$ANSIBLE_VAULT;1.1;AES256*'
+            $dec_actual = $actual | Get-DecryptedAnsibleVault -Password $password
+            $dec_actual | Should -Be (Get-Content -Path "$PSScriptRoot\Resources\small_1.1.yml" -Raw)
         }
     }
 }

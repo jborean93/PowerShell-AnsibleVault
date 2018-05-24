@@ -54,20 +54,30 @@ Function Get-DecryptedAnsibleVault {
     identical but 1.2 is used when the Id parameter is specified. This should
     be interoperable with the ansible-vault code used by Ansible itself.
     #>
-    [CmdletBinding(DefaultParameterSetName="ByValue")]
+    [CmdletBinding(DefaultParameterSetName="ByPath")]
     [OutputType([String])]
     param(
         [Parameter(Position=0, Mandatory=$true, ParameterSetName="ByPath")] [String]$Path,
-        [Parameter(Position=1, Mandatory=$true, ParameterSetName="ByValue", ValueFromPipeline, ValueFromPipelineByPropertyName)] [String]$Value,
-        [Parameter(Position=2, Mandatory=$true)] [SecureString]$Password,
+        [Parameter(Position=0, Mandatory=$true, ParameterSetName="ByValue", ValueFromPipeline, ValueFromPipelineByPropertyName)] [String]$Value,
+        [Parameter(Position=1, Mandatory=$true)] [SecureString]$Password,
         [Parameter()] [System.Text.Encoding]$Encoding = [System.Text.Encoding]::UTF8
     )
 
     $vault_text = switch ($PSCmdlet.ParameterSetName) {
-        ByPath { [System.IO.File]::ReadAllText($Path) }
+        ByPath {
+            $pwd_path = Join-Path -Path $pwd -ChildPath $Path
+            if (Test-Path -Path $pwd_path -PathType Leaf) {
+                [System.IO.File]::ReadAllText($pwd_path)
+            } else {
+                [System.IO.File]::ReadAllText($Path)
+            }
+        }
         ByValue { $Value }
     }
 
+    if ($null -eq $vault_text) {
+        throw [System.ArgumentException]"Failed to get vault text to decrypt"
+    }
     if (-not $vault_text.StartsWith('$ANSIBLE_VAULT;')) {
         throw [System.ArgumentException]"Vault text does not start with the header `$ANSIBLE_VAULT;"
     }

@@ -1,5 +1,11 @@
 # Changelog for AnsibleVault
 
+## v0.2.0 - 2018-05-25
+
+* Support getting a vault file based on the pwd when using the `-Path` parameter
+* Set the default parameter to `-Path` to better replicate the `ansible-vault` commands
+
+
 ## v0.1.0 - 2018-05-19
 
 * Initial version for the `AnsibleVault` module
