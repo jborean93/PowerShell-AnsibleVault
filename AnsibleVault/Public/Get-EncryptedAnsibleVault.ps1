@@ -53,18 +53,28 @@ Function Get-EncryptedAnsibleVault {
     identical but 1.2 is used when the Id parameter is specified. This should
     be interoperable with the ansible-vault code used by Ansible itself.
     #>
-    [CmdletBinding(DefaultParameterSetName="ByValue")]
+    [CmdletBinding(DefaultParameterSetName="ByPath")]
     [OutputType([String])]
     param(
         [Parameter(Position=0, Mandatory=$true, ParameterSetName="ByPath")] [String]$Path,
-        [Parameter(Position=1, Mandatory=$true, ParameterSetName="ByValue", ValueFromPipeline, ValueFromPipelineByPropertyName)] [String]$Value,
-        [Parameter(Position=2, Mandatory=$true)] [SecureString]$Password,
+        [Parameter(Position=0, Mandatory=$true, ParameterSetName="ByValue", ValueFromPipeline, ValueFromPipelineByPropertyName)] [String]$Value,
+        [Parameter(Position=1, Mandatory=$true)] [SecureString]$Password,
         [Parameter()] [String]$Id
     )
 
     $bytes_to_encrypt = switch($PSCmdlet.ParameterSetName) {
-        ByPath { [System.IO.File]::ReadAllBytes($Path) }
+        ByPath {
+            $pwd_path = Join-Path -Path $pwd -ChildPath $Path
+            if (Test-Path -Path $pwd_path -PathType Leaf) {
+                [System.IO.File]::ReadAllBytes($pwd_path)
+            } else {
+                [System.IO.File]::ReadAllBytes($Path)
+            }
+        }
         ByValue { [System.Text.Encoding]::UTF8.GetBytes($Value) }
+    }
+    if ($null -eq $bytes_to_encrypt) {
+        throw [System.ArgumentException]"Failed to get bytes for vault to encrypt"
     }
 
     # Generate a secure random salt value

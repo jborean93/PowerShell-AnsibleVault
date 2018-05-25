@@ -48,7 +48,21 @@ Describe "$module_name PS$ps_version tests" {
             $actual = Get-DecryptedAnsibleVault -Path "$PSScriptRoot\Resources\$Vault.vault" -Password $password
             $actual | Should -Be $expected
 
+            # repeat again and make sure omitting -Path is for the path to a vault file
+            $actual = Get-DecryptedAnsibleVault "$PSScriptRoot\Resources\$Vault.vault" -Password $password
+            $actual | Should -Be $expected
+
             $actual = $vault_contents | Get-DecryptedAnsibleVault -Password $password
+            $actual | Should -Be $expected
+        }
+        It "Can decrypt vault file in pwd not absolute path" {
+            $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+            $previous_pwd = (Get-Location).Path
+            Set-Location -Path $PSScriptRoot\Resources
+
+            $expected = (Get-Content -Path "$PSScriptRoot\Resources\small_1.1.yml" -Raw).Replace("`r`n", "`n")
+            $actual = Get-DecryptedAnsibleVault -Path "small_1.1.vault" -Password $password
+            Set-Location -Path $previous_pwd
             $actual | Should -Be $expected
         }
 
