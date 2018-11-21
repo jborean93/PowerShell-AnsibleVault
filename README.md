@@ -155,14 +155,14 @@ Here are some examples that imitate the existing `ansible-vault` commands;
 $password = Read-Host -Prompt "Enter the vault password" -AsSecureString
 
 # ansible-vault encrypt
-Get-EncryptedAnsibleVault -Path vault.yml -Password $password | Set-Content -Path vault.yml
+Get-EncryptedAnsibleVault -Path vault.yml -Password $password | Set-Content -Path vault.yml -NoNewLine
 
 # ansible-vault encrypt_string --stdin-name 'vault_variable'
 $vault_text = Read-Host -Prompt "Enter string to encrypt" | Get-EncryptedAnsibleVault -Password $password
 Write-Output -InputObject "vault_variable: !vault |`n        $($vault_text.Replace("`n", "`n        "))"
 
 # ansible-vault decrypt
-Get-DecryptedAnsibleVault -Path vault.yml -Password $password | Set-Content -Path vault.yml
+Get-DecryptedAnsibleVault -Path vault.yml -Password $password | Set-Content -Path vault.yml -NoNewLine
 
 # ansible-vault view
 Get-DecryptedAnsibleVault -Path vault.yml -Password $password
@@ -171,7 +171,7 @@ Get-DecryptedAnsibleVault -Path vault.yml -Password $password
 $old_pass = Read-Host -Prompt "Enter the original vault password" -AsSecureString
 $new_pass = Read-Host -Prompt "Enter the new vault password" -AsSecureString
 
-Get-DecryptedAnsibleVault -Path vault.yml -Password $old_pass | Get-EncryptedAnsibleVault -Password $new_pass | Set-Content -Path vault.yml
+Get-DecryptedAnsibleVault -Path vault.yml -Password $old_pass | Get-EncryptedAnsibleVault -Password $new_pass | Set-Content -Path vault.yml -NoNewLine
 
 # ansible-vault encrypt --vault-id dev@prompt
 Get-EncryptedAnsibleVault -Value "some secret" -Id dev -Password (Read-Host -Prompt "Enter the password" -AsSecureString)
