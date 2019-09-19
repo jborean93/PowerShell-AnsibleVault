@@ -5,28 +5,28 @@ Function Split-Byte {
     <#
     .SYNOPSIS
     Splits a byte array based on the character specified.
-    
+
     .DESCRIPTION
     Takes in a byte array and splits into an ArrayList based on the character
     specified by Char.
-    
+
     .PARAMETER Value
     [byte[]] The byte array to split.
-    
+
     .PARAMETER Char
     [char] The char to split the byte array with.
-    
+
     .PARAMETER MaxSplit
     [int] If specified, this is maximum number of splits that will occur.
 
     .OUTPUTS
     [System.Collections.ArrayList] The array list that contains each split.
-    
+
     .EXAMPLE
     Split-Bytes -Value -Char ([char]"`n")
 
     Split-Bytes -Value $byte_array -Char ([char]"a") -MaxSplit 2
-    
+
     .NOTES
     The MaxSplit parameter is the number of times a split will occur and not
     number of entries in the returned ArrayList. For example -MaxSplit of 2 but

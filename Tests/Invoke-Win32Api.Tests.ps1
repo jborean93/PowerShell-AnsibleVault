@@ -59,12 +59,12 @@ Describe "$module_name PS$ps_version tests" {
             $sid = New-Object -TypeName System.Security.Principal.SecurityIdentifier -ArgumentList $sid_string
             $sid_bytes = New-Object -TypeName byte[] -ArgumentList $sid.BinaryLength
             $sid.GetBinaryForm($sid_bytes, 0)
-        
+
             $name = New-Object -TypeName System.Text.StringBuilder
             $name_length = 0
             $domain_name = New-Object -TypeName System.Text.StringBuilder
             $domain_name_length = 0
-        
+
             $invoke_args = @{
                 DllName = "Advapi32.dll"
                 MethodName = "LookupAccountSidW"
@@ -82,7 +82,7 @@ Describe "$module_name PS$ps_version tests" {
                 SetLastError = $true
                 CharSet = "Unicode"
             }
-        
+
             $res = Invoke-Win32Api @invoke_args
             $name.EnsureCapacity($name_length)
             $domain_name.EnsureCapacity($domain_name_length)

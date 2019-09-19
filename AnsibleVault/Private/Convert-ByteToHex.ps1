@@ -5,20 +5,20 @@ Function Convert-ByteToHex {
     <#
     .SYNOPSIS
     Converts a byte array to a string of hex characters.
-    
+
     .DESCRIPTION
     Takes in a byte array and returns the hex string representation of each
     byte.
-    
+
     .PARAMETER Value
     [byte[]] The byte array to create the hex string from.
 
     .RETURNS HexString
     [String] The hex string of the byte array.
-    
+
     .EXAMPLE
     Convert-BytesToHex -Value [byte[]]@(72, 101, 108, 108, 111)
-    
+
     .NOTES
     No special notes.
     #>

@@ -37,7 +37,7 @@ Describe "$module_name PS$ps_version tests" {
             if ($VaultSecret -is [byte[]]) {
                 $VaultSecret = [System.Text.Encoding]::UTF8.GetString($VaultSecret)
             }
-            
+
             $vault_contents = Get-Content -Path "$PSScriptRoot\Resources\$Vault.vault" -Raw
             $expected = (Get-Content -Path "$PSScriptRoot\Resources\$Vault.yml" -Raw).Replace("`r`n", "`n")
             $password = ConvertTo-SecureString -String $VaultSecret -AsPlainText -Force

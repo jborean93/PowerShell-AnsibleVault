@@ -5,14 +5,14 @@ Function New-VaultKey {
     <#
     .SYNOPSIS
     Generates the various keys required for vault encryption/decryption.
-    
+
     .DESCRIPTION
     Generates the Cipher, HMAC, and AES CTR Nonce used as part of the Vault
     operations.
-    
+
     .PARAMETER Password
     [SecureString] The password used to derive the key.
-    
+
     .PARAMETER Salt
     [byte[]] The salt used to derive the key.
 
@@ -22,13 +22,13 @@ Function New-VaultKey {
     [byte[]] The used as part of the HMAC calculation.
 
     [byte[]] The nonce/counter used in the AES CTR cipher.
-    
+
     .EXAMPLE
     $salt = New-Object -TypeName byte[] -ArgumentList 32
     $random_gen = New-Object -TypeName System.Security.Cryptography.RNGCryptoServiceProvider
     $random_gen.GetBytes($salt)
     New-VaultKeys -Password $sec_string -Salt $salt
-    
+
     .NOTES
     On decryption, the salt is stored in the cipher bytes whiile the salt must
     be randomly generated when creating a vault.

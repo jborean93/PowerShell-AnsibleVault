@@ -5,20 +5,20 @@ Function Convert-HexToByte {
     <#
     .SYNOPSIS
     Converts a string of hex characters to a byte array.
-    
+
     .DESCRIPTION
     Takes in a string of hex characters and returns the byte array that the
     hex represents.
-    
+
     .PARAMETER Value
     [String] The hex string to convert.
 
     .OUTPUTS
     [byte[]] The byte array based on the converted hex string.
-    
+
     .EXAMPLE
     Convert-HexToBytes -Value "48656c6c6f20576f726c64"
-    
+
     .NOTES
     The hex string should have no spaces that separate each hex char.
     #>

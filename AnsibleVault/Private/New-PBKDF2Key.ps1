@@ -5,7 +5,7 @@ Function New-PBKDF2Key {
     <#
     .SYNOPSIS
     Uses the PBKDF2 functiion to derive a key used in cryptographic functions.
-    
+
     .DESCRIPTION
     This function can be used to generated a cryptographically secure key based
     on the PBKDF2 function. This function calls some native Win32 APIs as the
@@ -15,34 +15,34 @@ Function New-PBKDF2Key {
     Because we want this script to run on older versions on Windows and Ansible
     Vault uses the SHA256 algorithm we have to resort to using the native
     function BCryptDeriveKeyPBKDF2.
-    
+
     .PARAMETER Algorithm
     [String] Specifies the algorithm to use for the HMAC calculation. This must
     be one of the algorithm identifiers specified in
     https://msdn.microsoft.com/en-us/library/windows/desktop/aa375534.aspx.
-    
+
     .PARAMETER Password
     [SecureString] The password used as the part of the PBKDF2 function.
-    
+
     .PARAMETER Salt
     [byte[]] The salt used as part of the PBKDF2 function.
-    
+
     .PARAMETER Length
     [UInt32] The length of the derived key.
-    
+
     .PARAMETER Iterations
     [UInt64] The number of iterations for the PBKDF2 function.
 
     .OUTPUTS
     [byte[]] The derived key of the PBKDF2 function run.
-    
+
     .EXAMPLE
     $salt = New-Object -TypeName byte[] -ArgumentList 32
     $random_gen = New-Object -TypeName System.Security.Cryptography.RNGCryptoServiceProvider
     $random_gen.GetBytes($salt)
 
     New-PBKDF2Key -Algorithm SHA256 -Password $sec_string -Salt $salt -Length 32 -Iterations 10000
-    
+
     .NOTES
     As Windows has not automatic marshalling for a SecureString to a P/Invoke
     call, the SecureString is temporarily assigned to a IntPtr before being
@@ -98,7 +98,7 @@ Function New-PBKDF2Key {
         } finally {
             [System.Runtime.InteropServices.Marshal]::ZeroFreeGlobalAllocAnsi($pass)
         }
-        
+
         if ($res -ne 0) {
             if ($return_codes.ContainsKey($res.ToString())) {
                 $exception_msg = $return_codes.$($res.ToString())
@@ -106,7 +106,7 @@ Function New-PBKDF2Key {
                 $hex_code = ("{0:x8}" -f $res).ToUpper()
                 $exception_msg = "Unknown error (0x$hex_code)"
             }
-            
+
             throw "Failed to derive key: $exception_msg"
         }
     } finally {
@@ -122,7 +122,7 @@ Function New-PBKDF2Key {
                 $hex_code = ("{0:x8}" -f $res).ToUpper()
                 $exception_msg = "Unknown error (0x$hex_code)"
             }
-            
+
             throw "Failed to close algorithm provider: $exception_msg"
         }
     }

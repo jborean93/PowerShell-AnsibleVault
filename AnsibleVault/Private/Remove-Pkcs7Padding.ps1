@@ -5,23 +5,23 @@ Function Remove-Pkcs7Padding {
     <#
     .SYNOPSIS
     Removes PKCS7 padding on a paddded byte array.
-    
+
     .DESCRIPTION
     Will remove any PKCS7 padding on a byte array. This can be run multiple
     times and the result will always be the same.
-    
+
     .PARAMETER Value
     [byte[]] The bytes to add the remove from.
-    
+
     .PARAMETER BlockSize
     [int] The size of the block in bits.
 
     .OUTPUTS
     [byte[]] The input byte array that has been unpadded.
-    
+
     .EXAMPLE
     Remove-Pkcs7Padding -Bytes [byte[]]@(1, 2, 3, 5, 5, 5, 5 ,5) -BlockSize 64
-    
+
     .NOTES
     Usually this is done as part of a crypto provider but because we use
     Invoke-AESCTRCycle (AES in CTR mode/stream cipher) we need to manually
