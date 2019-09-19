@@ -37,7 +37,14 @@ function Resolve-Module
             else
             {
                 Write-Verbose -Message "$($ModuleName) Missing, installing Module"
-                Install-Module -Name $ModuleName -Force
+                if ($ModuleName -eq "PSScriptAnalyzer"){
+                    # PSScriptAnalyzer v1.18.3 (2019.09.17) is only compatible with pwsh v6.2.0+,
+                    # but pwsh v6.1.0 is installed on Appveyor.
+                    if (($PSVersionTable.PSVersion.Major -ge 6 ) -and ($PSVersionTable.PSVersion -lt "6.2.0")) {
+                        $Version = "1.18.2"
+                    }
+                }
+                Install-Module -Name $ModuleName -Force -RequiredVersion $Version
                 Import-Module -Name $ModuleName -Force -RequiredVersion $Version
             }
         }
