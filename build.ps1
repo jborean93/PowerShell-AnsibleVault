@@ -56,6 +56,7 @@ Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
 
 Resolve-Module Psake, PSDeploy, Pester, BuildHelpers, PsScriptAnalyzer
 
+Get-ChildItem env:BH* | ForEach-Object {[Environment]::SetEnvironmentVariable($_.name, "")}
 Set-BuildEnvironment
 
 Invoke-psake .\psake.ps1
