@@ -17,16 +17,16 @@ Function Invoke-Win32Api {
     sources I used were;
     # http://www.leeholmes.com/blog/2007/10/02/managing-ini-files-with-powershell/
     # https://blogs.technet.microsoft.com/heyscriptingguy/2013/06/27/use-powershell-to-interact-with-the-windows-api-part-3/
-    
+
     .PARAMETER DllName
     [String] The DLL to import the method from.
-    
+
     .PARAMETER MethodName
     [String] The name of the method.
-    
+
     .PARAMETER ReturnType
     [Type] The type of the return object returned by the method.
-    
+
     .PARAMETER ParameterTypes
     [Type[]] Array of types that define the parameter types required by the
     method. The type index should match the index of the value in the
@@ -34,7 +34,7 @@ Function Invoke-Win32Api {
 
     If the parameter is a reference or an out parameter, use [Ref] as the type
     for that parameter.
-    
+
     .PARAMETER Parameters
     [Object[]] Array of objects to supply for the parameter values required by
     the method. The value index should match the index of the value in the
@@ -42,11 +42,11 @@ Function Invoke-Win32Api {
 
     If the parameter is a reference or an out parameter, the object should be a
     [Ref] of the parameter.
-    
+
     .PARAMETER SetLastError
     [Bool] Whether to apply the SetLastError Dll attribute on the method,
     default is $false
-    
+
     .PARAMETER CharSet
     [Runtime.InteropServices.CharSet] The charset to apply to the CharSet Dll
     attribute on the method, default is [Runtime.InteropServices.CharSet]::Auto
@@ -54,7 +54,7 @@ Function Invoke-Win32Api {
     .OUTPUTS
     [Object] The return result from the method, the type of this value is based
     on the ReturnType parameter.
-    
+
     .EXAMPLE
     # Use the Win32 APIs to open a file handle
     $handle = Invoke-Win32Api -DllName kernel32.dll `
@@ -115,7 +115,7 @@ Function Invoke-Win32Api {
         throw [System.ComponentModel.Win32Exception]$last_err
     }
     Write-Output "SID: $sid_string, Domain: $($domain_name.ToString()), Name: $($name.ToString())"
-    
+
     .NOTES
     The parameters to use for a method dynamically based on the method that is
     called. There is no cut and fast way to automatically convert the interface
@@ -125,11 +125,11 @@ Function Invoke-Win32Api {
     [CmdletBinding()]
     [OutputType([Object])]
     param(
-        [Parameter(Position=0, Mandatory=$true)] [String]$DllName,
-        [Parameter(Position=1, Mandatory=$true)] [String]$MethodName,
-        [Parameter(Position=2, Mandatory=$true)] [Type]$ReturnType,
-        [Parameter(Position=3)] [Type[]]$ParameterTypes = [Type[]]@(),
-        [Parameter(Position=4)] [Object[]]$Parameters = [Object[]]@(),
+        [Parameter(Position = 0, Mandatory = $true)] [String]$DllName,
+        [Parameter(Position = 1, Mandatory = $true)] [String]$MethodName,
+        [Parameter(Position = 2, Mandatory = $true)] [Type]$ReturnType,
+        [Parameter(Position = 3)] [Type[]]$ParameterTypes = [Type[]]@(),
+        [Parameter(Position = 4)] [Object[]]$Parameters = [Object[]]@(),
         [Parameter()] [Bool]$SetLastError = $false,
         [Parameter()] [Runtime.InteropServices.CharSet]$CharSet = [Runtime.InteropServices.CharSet]::Auto
     )
@@ -139,7 +139,9 @@ Function Invoke-Win32Api {
 
     # First step is to define the dynamic assembly in the current AppDomain
     $assembly = New-Object -TypeName System.Reflection.AssemblyName -ArgumentList "Win32ApiAssembly"
-    $dynamic_assembly = [AppDomain]::CurrentDomain.DefineDynamicAssembly($assembly, [Reflection.Emit.AssemblyBuilderAccess]::Run)
+    $AssemblyBuilder = [System.Reflection.Assembly].Assembly.GetTypes() | Where-Object { $_.Name -eq 'AssemblyBuilder' }
+    $dynamic_assembly = $AssemblyBuilder::DefineDynamicAssembly($assembly, [Reflection.Emit.AssemblyBuilderAccess]::Run)
+
 
     # Second step is to create the dynamic module and type/class that contains
     # the P/Invoke definition
@@ -151,7 +153,7 @@ Function Invoke-Win32Api {
     $parameter_types = $ParameterTypes.Clone()
     for ($i = 0; $i -lt $ParameterTypes.Length; $i++) {
         if ($ParameterTypes[$i] -eq [Ref]) {
-            $parameter_types[$i]  = $Parameters[$i].Value.GetType().MakeByRefType()
+            $parameter_types[$i] = $Parameters[$i].Value.GetType().MakeByRefType()
         }
     }
 
