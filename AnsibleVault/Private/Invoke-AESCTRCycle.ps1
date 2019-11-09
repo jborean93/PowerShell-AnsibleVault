@@ -5,27 +5,27 @@ Function Invoke-AESCTRCycle {
     <#
     .SYNOPSIS
     Uses AES in CTR mode to encrypt/decrypt a byte array.
-    
+
     .DESCRIPTION
     Uses the AES encryption mechanism in CTR block mode to transform input
     bytes. This function can be used to encrypt and decrypt the bytes in the
     Ansible Vault with relative ease. Because AES in CTR mode is a stream
     cipher, the input bytes does not have to be the same as the AES block size.
-    
+
     .PARAMETER Value
     [byte[]] The input bytes to transform.
-    
+
     .PARAMETER Key
     [byte[]] The key used to increment the nonce/counter used as part of the
     byte transformation process.
-    
+
     .PARAMETER Nonce
     [byte[]] The nonce/counter used to XOR the input bytes and transform it to
     the output bytes
 
     .OUTPUTS
     [byte[]] The encrypted/decrypted bytes after running through a cycle.
-    
+
     .NOTES
     The .NET class AesCryptoServiceProvider does not have a native
     CTR mode so this must be done manually. Thanks to Hans Wolff at
@@ -51,7 +51,7 @@ Function Invoke-AESCTRCycle {
         if ($xor_mask.Count -eq 0) {
             $counter_mode_block = New-Object -TypeName byte[] -ArgumentList ($counter_cipher.BlockSize / 8)
             $counter_encryptor.TransformBlock($Nonce, 0, $Nonce.Length, $counter_mode_block, 0) > $null
-    
+
             for ($j = $Nonce.Length - 1; $j -ge 0; $j--) {
                 $current_nonce_value = $Nonce[$j]
                 if ($current_nonce_value -eq 255) {
@@ -64,12 +64,12 @@ Function Invoke-AESCTRCycle {
                     break
                 }
             }
-    
+
             foreach ($counter_byte in $counter_mode_block) {
                 $xor_mask.Enqueue($counter_byte)
             }
         }
-        
+
         $current_mask = $xor_mask.Dequeue()
         $output[$i] = [byte]($Value[$i] -bxor $current_mask)
     }

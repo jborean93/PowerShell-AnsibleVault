@@ -15,7 +15,7 @@ Describe "$module_name PS$ps_version tests" {
         It 'should get valid bytes' {
             $expected = [byte[]]@(72, 101, 108, 108, 111)
             $actual = Convert-HexToByte -Value "48656c6c6f"
-            
+
             $actual.Length | Should -Be $expected.Count
             for ($i = 0; $i -lt $actual.Count; $i++) {
                 $actual[$i] | Should -Be $expected[$i]

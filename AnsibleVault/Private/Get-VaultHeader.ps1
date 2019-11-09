@@ -5,11 +5,11 @@ Function Get-VaultHeader {
     <#
     .SYNOPSIS
     Parses the vault text and get's the header information.
-    
+
     .DESCRIPTION
     Takes in the full vault string and returns the header information as well
     as the byte array of the encrypted bytes.
-    
+
     .PARAMETER Value
     [String] The Ansible vault contents as a string.
 
@@ -21,10 +21,10 @@ Function Get-VaultHeader {
     [String] The ID of the vault.
 
     [byte[]] The byte array of the encrypted vault contents.
-    
+
     .EXAMPLE
     Get-VaultHeader -Value $vault_text
-    
+
     .NOTES
     Currently only the 1.1 and 1.2 versions of Ansible Vault is supported,
     as of writting this, they are the latest and only supported versions in
@@ -33,9 +33,9 @@ Function Get-VaultHeader {
     [CmdletBinding()]
     [OutputType([Object[]])]
     param(
-        [Parameter(Mandatory=$true)] [String]$Value
+        [Parameter(Mandatory = $true)] [String]$Value
     )
-    $vault_lines = $Value.Split(@("`r`n", "`r", "`n"), [System.StringSplitOptions]::RemoveEmptyEntries)
+    $vault_lines = $Value -split "[\r\n]" | Where-Object {$_}
     $header = $vault_lines[0].Trim().Split(";")
 
     $version = [Version]$header[1].Trim()

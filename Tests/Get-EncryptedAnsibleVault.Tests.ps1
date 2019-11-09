@@ -21,7 +21,7 @@ Describe "$module_name PS$ps_version tests" {
             @{ Vault = "dev_1.2"; VaultSecret = 'WsT2Wf!MnHctYXIQbI%xr$L8aid@fLTS6tA*' }
         ) {
             param ($Vault, $VaultSecret)
-            
+
             $path = "$PSScriptRoot\Resources\$Vault.yml"
             $plaintext = (Get-Content -Path $path -Raw).Replace("`r`n", "`n")
             $password = ConvertTo-SecureString -String $VaultSecret -AsPlainText -Force

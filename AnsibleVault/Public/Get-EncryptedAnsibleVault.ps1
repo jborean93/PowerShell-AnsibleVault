@@ -5,22 +5,22 @@ Function Get-EncryptedAnsibleVault {
     <#
     .SYNOPSIS
     Create an encrypted string the is compatible with Ansible Vault.
-    
+
     .DESCRIPTION
     This cmdlet will take in a string or path to a file to encrypt and then
     return the encrypted Ansible Vault text.
-    
+
     .PARAMETER Path
     [String] The path to a file whose contents will be encrypted. This is
     mutually exclusive to the Value parameter.
-    
+
     .PARAMETER Value
     [String] The string value to encrypt. This is mutually exclusive to the
     Path parameter.
-    
+
     .PARAMETER Password
     [SecureString] The password used to encrypt the value with
-    
+
     .PARAMETER Id
     [String] The ID to specify for the created vault. If not specified then no
     ID will be applied. This is only supported in Ansible since the 2.4
@@ -31,7 +31,7 @@ Function Get-EncryptedAnsibleVault {
 
     .OUTPUTS
     [String] The encrypted vault string.
-    
+
     .EXAMPLE
     # Create the secure string that stores the vault password
     $password = Read-Host -AsSecureString
@@ -47,7 +47,7 @@ Function Get-EncryptedAnsibleVault {
 
     # create a vault string with a specific ID
     Get-EncryptedAnsibleVault -Value "variable: abc`nvariable2: def" -Password $password -Id Prod
-    
+
     .NOTES
     This only supports the vault versions 1.1 and 1.2. These version are mostly
     identical but 1.2 is used when the Id parameter is specified. This should

@@ -5,23 +5,23 @@ Function Get-HMACValue {
     <#
     .SYNOPSIS
     Generates the HMAC hex string of a byte array.
-    
+
     .DESCRIPTION
     Generates the HMAC hex string of a byte array using the SHA256 algorithm
     and the Key specified.
-    
+
     .PARAMETER Value
     [byte[]] The byte array to compute the hash from.
-    
+
     .PARAMETER Key
     [byte[]] The key to use as part of the HMAC function.
 
     .OUTPUTS
     [String] The hex string of the HMAC output.
-    
+
     .EXAMPLE
     Get-HMACValue -Value $bytes -Key $key
-    
+
     .NOTES
     This is locked in to use the SHA256 algorithm, in the future this may
     change and be configurable but right now Ansible Vault only uses this.

@@ -5,19 +5,19 @@ Function Get-DecryptedAnsibleVault {
     <#
     .SYNOPSIS
     Decrypt an Ansible Vault string and return the plaintext as a string.
-    
+
     .DESCRIPTION
     This cmdlet will take in a Ansible Vault string and return the decrypted
     value.
-    
+
     .PARAMETER Path
     [String] The path to a file whose contents will be decrypted. This is
     mutually exclusive to the Value parameter.
-    
+
     .PARAMETER Value
     [String] The string value to decrypt. This is mutually exclusive to the
     Path parameter.
-    
+
     .PARAMETER Password
     [SecureString] The password used to decrypt the value with
 
@@ -32,7 +32,7 @@ Function Get-DecryptedAnsibleVault {
 
     .OUTPUTS
     [String] The decrypted vault string.
-    
+
     .EXAMPLE
     # Create the secure string that stores the vault password
     $password = Read-Host -AsSecureString
@@ -48,7 +48,7 @@ Function Get-DecryptedAnsibleVault {
 
     # decrypt vault that had the original plaintext encoded as UTF-16
     Get-DecryptedAnsibleVault -Value $vault_text -Password $password -Encoding ([System.Text.Encoding]::Unicode)
-    
+
     .NOTES
     This only supports the vault versions 1.1 and 1.2. These version are mostly
     identical but 1.2 is used when the Id parameter is specified. This should

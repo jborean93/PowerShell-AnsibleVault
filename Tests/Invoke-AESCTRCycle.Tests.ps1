@@ -171,7 +171,7 @@ Describe "$module_name PS$ps_version tests" {
             $actual = Invoke-AESCTRCycle -Value (Convert-HexToByte -Value $InputHex) `
                 -Nonce (Convert-HexToByte -Value $Counter) `
                 -Key (Convert-HexToByte -Value $Key)
-            
+
             $actual | Should -Be $expected
         }
     }

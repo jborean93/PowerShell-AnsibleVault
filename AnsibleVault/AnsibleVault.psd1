@@ -3,7 +3,7 @@
 
 @{
     RootModule = 'AnsibleVault.psm1'
-    ModuleVersion = '0.2.0'
+    ModuleVersion = '0.3.0'
     GUID = '718e9512-c750-40f3-b00e-c94b20910ecb'
     Author = 'Jordan Borean'
     Copyright = 'Copyright (c) 2018 by Jordan Borean, Red Hat, licensed under MIT.'
