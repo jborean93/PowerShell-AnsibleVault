@@ -127,7 +127,6 @@ Describe "$module_name PS$ps_version tests" {
         ){
             param($Algorithm, $Secret, $Salt, $Iterations, $Length, $Expected)
 
-            
             if ($is_core_clr) {
                 # .NET Fails if the Salt is less than 8 chars even though it is valid, just need to skip those tests
                 return
