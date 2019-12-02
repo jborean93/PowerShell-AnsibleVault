@@ -44,11 +44,10 @@ Function New-PBKDF2Key {
     New-PBKDF2Key -Algorithm SHA256 -Password $sec_string -Salt $salt -Length 32 -Iterations 10000
 
     .NOTES
-    As Windows has not automatic marshalling for a SecureString to a P/Invoke
-    call, the SecureString is temporarily assigned to a IntPtr before being
-    passed to the BCryptDeriveKeyPBKDF2 with the SecureStringToGlobalAllocAnsi
-    function. This pointer is immediately cleared withZeroFreeGlobalAllocAnsi
-    as soon as possible.
+    As Windows has no automatic marshalling for a SecureString to a P/Invoke
+    call, the SecureString is decrypted to a string. This means the password
+    is kept in memory until the process has finished. There isn't much we can
+    do about that.
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification="Does not adjust system state, creates a new key that is in memory")]
     [CmdletBinding()]
@@ -113,15 +112,19 @@ Function New-PBKDF2Key {
 
     try {
         $key = New-Object -TypeName byte[] -ArgumentList $Length
-        $pass = [System.Runtime.InteropServices.Marshal]::SecureStringToGlobalAllocAnsi($Password)
+        $pass = [System.Runtime.InteropServices.Marshal]::SecureStringToGlobalAllocUnicode($Password)
         try {
+            $pass_str = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($pass)
+            $pass_bytes = [System.Text.Encoding]::UTF8.GetBytes($pass_str)
             $res = Invoke-Win32Api -DllName Bcrypt.dll `
                 -MethodName BCryptDeriveKeyPBKDF2 `
                 -ReturnType UInt32 `
-                -ParameterTypes @([IntPtr], [IntPtr], [UInt32], [byte[]], [UInt32], [UInt64], [byte[]], [UInt32], [UInt32]) `
-                -Parameters @($algo, $pass, $Password.Length, $Salt, $Salt.Length, $Iterations, $key, $key.Length, 0)
+                -ParameterTypes @([IntPtr], [Byte[]], [UInt32], [byte[]], [UInt32], [UInt64], [byte[]], [UInt32], [UInt32]) `
+                -Parameters @($algo, $pass_bytes, $pass_bytes.Length, $Salt, $Salt.Length, $Iterations, $key, $key.Length, 0)
         } finally {
-            [System.Runtime.InteropServices.Marshal]::ZeroFreeGlobalAllocAnsi($pass)
+            [System.Runtime.InteropServices.Marshal]::ZeroFreeGlobalAllocUnicode($pass)
+            $pass_str = $null
+            $pass_bytes = $null
         }
 
         if ($res -ne 0) {
