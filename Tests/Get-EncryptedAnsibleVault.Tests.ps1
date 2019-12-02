@@ -8,7 +8,7 @@ if ($env:APPVEYOR_REPO_BRANCH -and $env:APPVEYOR_REPO_BRANCH -notlike "master") 
 
 $ps_version = $PSVersionTable.PSVersion.Major
 $module_name = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
-Import-Module -Name $PSScriptRoot\..\AnsibleVault -Force
+Import-Module -Name ([System.IO.Path]::Combine($PSScriptRoot, '..', 'AnsibleVault')) -Force
 
 Describe "$module_name PS$ps_version tests" {
     Context 'Strict mode' {
@@ -22,7 +22,7 @@ Describe "$module_name PS$ps_version tests" {
         ) {
             param ($Vault, $VaultSecret)
 
-            $path = "$PSScriptRoot\Resources\$Vault.yml"
+            $path = [System.IO.Path]::Combine($PSScriptRoot, 'Resources', "$($Vault).yml")
             $plaintext = (Get-Content -Path $path -Raw).Replace("`r`n", "`n")
             $password = ConvertTo-SecureString -String $VaultSecret -AsPlainText -Force
 
@@ -85,13 +85,13 @@ Describe "$module_name PS$ps_version tests" {
         It "Can encrypt a vault file in the pwd" {
             $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
             $previous_pwd = (Get-Location).Path
-            Set-Location -Path $PSScriptRoot\Resources
+            Set-Location -Path ([System.IO.Path]::Combine($PSScriptRoot, 'Resources'))
 
             $actual = Get-EncryptedAnsibleVault -Path "small_1.1.yml" -Password $password
             Set-Location -Path $previous_pwd
             $actual | Should -BeLike '$ANSIBLE_VAULT;1.1;AES256*'
             $dec_actual = $actual | Get-DecryptedAnsibleVault -Password $password
-            $dec_actual | Should -Be (Get-Content -Path "$PSScriptRoot\Resources\small_1.1.yml" -Raw)
+            $dec_actual | Should -Be (Get-Content -Path ([System.IO.Path]::Combine($PSScriptRoot, 'Resources', 'small_1.1.yml')) -Raw)
         }
     }
 }

@@ -26,7 +26,8 @@ if(
     $env:BHPSModulePath -and
     $env:BHBuildSystem -ne 'Unknown' -and
     $env:BHBranchName -eq "master" -and
-    $tag_commit
+    $tag_commit -and
+    $PSVersionTable.PSVersion.Major -gt 5
 )
 {
     Deploy Module {

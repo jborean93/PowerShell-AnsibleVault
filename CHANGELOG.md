@@ -1,5 +1,10 @@
 # Changelog for AnsibleVault
 
+## v0.3.0 - 2019-12-02
+
+* Added support for PowerShell Core on both Windows and Linux
+
+
 ## v0.2.0 - 2018-05-25
 
 * Support getting a vault file based on the pwd when using the `-Path` parameter

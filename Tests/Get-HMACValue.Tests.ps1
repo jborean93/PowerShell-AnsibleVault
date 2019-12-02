@@ -5,10 +5,10 @@ if ($env:APPVEYOR_REPO_BRANCH -and $env:APPVEYOR_REPO_BRANCH -notlike "master") 
 
 $ps_version = $PSVersionTable.PSVersion.Major
 $module_name = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
-Import-Module -Name $PSScriptRoot\..\AnsibleVault -Force
-. $PSScriptRoot\..\AnsibleVault\Private\$module_name.ps1
-. $PSScriptRoot\..\AnsibleVault\Private\Convert-HexToByte.ps1
-. $PSScriptRoot\..\AnsibleVault\Private\Convert-ByteToHex.ps1
+Import-Module -Name ([System.IO.Path]::Combine($PSScriptRoot, '..', 'AnsibleVault')) -Force
+. ([System.IO.Path]::Combine($PSScriptRoot, '..', 'AnsibleVault', 'Private', "$($module_name).ps1"))
+. ([System.IO.Path]::Combine($PSScriptRoot, '..', 'AnsibleVault', 'Private', "Convert-HexToByte.ps1"))
+. ([System.IO.Path]::Combine($PSScriptRoot, '..', 'AnsibleVault', 'Private', "Convert-ByteToHex.ps1"))
 
 Describe "$module_name PS$ps_version tests" {
     Context 'Strict mode' {
