@@ -110,8 +110,8 @@ Get-EncryptedAnsibleVault
 These cmdlets have the following requirements
 
 * PowerShell v3.0 or newer
-* Windows PowerShell (not PowerShell Core)
-* Windows Server 2008 R2/Windows 7 or newer
+* Windows PowerShell or PowerShell Core
+* Windows Server 2008 R2/Windows 7 or newer, including Linux
 
 
 ## Installing
@@ -193,4 +193,3 @@ _Note: this requires PowerShellGet or WMF 5 to be installed_
 ## Backlog
 
 * See if it is possible to integrate with vim or some other cli editor if it is installed (`ansible-vault create/edit`)
-* Look at using [Rfc2898DeriveBytes](https://msdn.microsoft.com/en-us/library/system.security.cryptography.rfc2898derivebytes(v=vs.110).aspx) if it is available on the host to add support for PowerShell Core
