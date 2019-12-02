@@ -1,4 +1,4 @@
-# Copyright: (c) 2018, Jordan Borean (@jborean93) <jborean93@gmail.com>
+﻿# Copyright: (c) 2018, Jordan Borean (@jborean93) <jborean93@gmail.com>
 # MIT License (see LICENSE or https://opensource.org/licenses/MIT)
 
 Function New-PBKDF2Key {
@@ -61,6 +61,37 @@ Function New-PBKDF2Key {
         [Parameter(Mandatory=$true)] [UInt64]$Iterations
     )
 
+    # Rfc2898DeriveBytes only allowed a custom hash algorithm in 4.6 or newer. We check to see whether the enum is
+    # available and fallback to PInvoking.
+    try {
+        $null = [System.Security.Cryptography.HashAlgorithmName]
+        $use_dotnet = $true
+    } catch [System.Management.Automation.RuntimeException] {
+        $use_dotnet = $false
+    }
+
+    if ($use_dotnet) {
+        $algo = [System.Security.Cryptography.HashAlgorithmName]$Algorithm
+        $pass_ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToGlobalAllocUnicode($Password)
+        try {
+            $pass_str = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($pass_ptr)
+            $provider = New-Object -TypeName System.Security.Cryptography.Rfc2898DeriveBytes -ArgumentList @(
+                $pass_str,
+                $Salt,
+                $Iterations,
+                $algo
+            )
+            try {
+                return $provider.GetBytes($Length)
+            } finally {
+                $provider.Dispose()
+            }
+        } finally {
+            [System.Runtime.InteropServices.Marshal]::ZeroFreeGlobalAllocUnicode($pass_ptr)
+        }
+    }
+
+    # Rfc2898DeriveBytes not available on older platforms, rely on PInvoke for this step.
     $return_codes = @{
         "3221225485" = "An invalid parameter was passed to a service or function (STATUS_INVALID_PARAMETER 0xC0000000D)"
         "3221225480" = "An invalid HANDLE was specified (STATUS_INVALID_HANDLE 0xC0000008)"

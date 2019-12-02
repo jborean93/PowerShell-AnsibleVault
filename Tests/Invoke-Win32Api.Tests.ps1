@@ -3,10 +3,14 @@ if ($env:APPVEYOR_REPO_BRANCH -and $env:APPVEYOR_REPO_BRANCH -notlike "master") 
     $verbose.Add("Verbose", $true)
 }
 
+# Tests won't run on Linux so skip
+$is_windows = Get-Variable -Name IsWindows -ErrorAction SilentlyContinue
+$skip = $null -ne $is_windows -and $is_windows.Value -eq $false
+
 $ps_version = $PSVersionTable.PSVersion.Major
 $module_name = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
-Import-Module -Name $PSScriptRoot\..\AnsibleVault -Force
-. $PSScriptRoot\..\AnsibleVault\Private\$module_name.ps1
+Import-Module -Name ([System.IO.Path]::Combine($PSScriptRoot, '..', 'AnsibleVault')) -Force
+. ([System.IO.Path]::Combine($PSScriptRoot, '..', 'AnsibleVault', 'Private', "$($module_name).ps1"))
 
 Describe "$module_name PS$ps_version tests" {
     Context 'Strict mode' {
@@ -16,7 +20,7 @@ Describe "$module_name PS$ps_version tests" {
             { Invoke-Win32Api -DllName a.dll -MethodName a -ReturnType bool -ParameterTypes @([int]) -Parameters @() } | Should -Throw "ParameterType Count 1 not equal to Parameter Count 0"
         }
 
-        It 'invoke API that returns a handle' {
+        It 'invoke API that returns a handle' -Skip:$skip {
             $test_file_path = "$PSScriptRoot\Resources\test-deleteme.txt"
             if (-not (Test-Path -Path $test_file_path)) {
                 New-Item -Path $test_file_path -ItemType File > $null
@@ -54,7 +58,7 @@ Describe "$module_name PS$ps_version tests" {
             }
         }
 
-        It 'invoke API with output strings' {
+        It 'invoke API with output strings' -Skip:$skip {
             $sid_string = "S-1-5-18"
             $sid = New-Object -TypeName System.Security.Principal.SecurityIdentifier -ArgumentList $sid_string
             $sid_bytes = New-Object -TypeName byte[] -ArgumentList $sid.BinaryLength
