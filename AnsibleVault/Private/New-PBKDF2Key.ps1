@@ -45,9 +45,9 @@ Function New-PBKDF2Key {
 
     .NOTES
     As Windows has no automatic marshalling for a SecureString to a P/Invoke
-    call, the SecureString is decrypted to a string. This means the password
-    is kept in memory until the process has finished. There isn't much we can
-    do about that.
+    call, the SecureString is decrypted to a string. While attempts to clear it
+    from memory by running the Garbage Collector this isn't a guarantee. We
+    can only try our best.
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification="Does not adjust system state, creates a new key that is in memory")]
     [CmdletBinding()]
@@ -68,16 +68,21 @@ Function New-PBKDF2Key {
         $pass_ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToGlobalAllocUnicode($Password)
         try {
             $pass_str = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($pass_ptr, $Password.Length)
-            $provider = New-Object -TypeName System.Security.Cryptography.Rfc2898DeriveBytes -ArgumentList @(
-                $pass_str,
-                $Salt,
-                $Iterations,
-                $algo
-            )
             try {
-                return $provider.GetBytes($Length)
+                $provider = New-Object -TypeName System.Security.Cryptography.Rfc2898DeriveBytes -ArgumentList @(
+                    $pass_str,
+                    $Salt,
+                    $Iterations,
+                    $algo
+                )
+                try {
+                     return $provider.GetBytes($Length)
+                } finally {
+                    $provider.Dispose()
+                }
             } finally {
-                $provider.Dispose()
+                $pass_str = $null
+                [System.GC]::Collect()
             }
         } finally {
             [System.Runtime.InteropServices.Marshal]::ZeroFreeGlobalAllocUnicode($pass_ptr)
@@ -125,6 +130,7 @@ Function New-PBKDF2Key {
             [System.Runtime.InteropServices.Marshal]::ZeroFreeGlobalAllocUnicode($pass)
             $pass_str = $null
             $pass_bytes = $null
+            [System.GC]::Collect()
         }
 
         if ($res -ne 0) {
