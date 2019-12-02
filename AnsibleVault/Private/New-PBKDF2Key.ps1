@@ -61,16 +61,10 @@ Function New-PBKDF2Key {
         [Parameter(Mandatory=$true)] [UInt64]$Iterations
     )
 
-    # Rfc2898DeriveBytes only allowed a custom hash algorithm in 4.6 or newer. We check to see whether the enum is
-    # available and fallback to PInvoking.
-    try {
-        $null = [System.Security.Cryptography.HashAlgorithmName]
-        $use_dotnet = $true
-    } catch [System.Management.Automation.RuntimeException] {
-        $use_dotnet = $false
-    }
-
-    if ($use_dotnet) {
+    # Rfc2898DeriveBytes only allowed a custom hash algorithm in 4.6 or newer. We only use the .NET Method if running
+    # on PowerShell Core and falling back to PInvoke for PowerShell Desktop.
+    $is_core_clr = Get-Variable -Name IsCoreCLR -ErrorAction Ignore
+    if ($null -ne $is_core_clr -and $is_core_clr.Value -eq $true) {
         $algo = [System.Security.Cryptography.HashAlgorithmName]$Algorithm
         $pass_ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToGlobalAllocUnicode($Password)
         try {
