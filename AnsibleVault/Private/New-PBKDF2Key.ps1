@@ -67,7 +67,7 @@ Function New-PBKDF2Key {
         $algo = [System.Security.Cryptography.HashAlgorithmName]$Algorithm
         $pass_ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToGlobalAllocUnicode($Password)
         try {
-            $pass_str = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($pass_ptr)
+            $pass_str = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($pass_ptr, $Password.Length)
             $provider = New-Object -TypeName System.Security.Cryptography.Rfc2898DeriveBytes -ArgumentList @(
                 $pass_str,
                 $Salt,
@@ -114,7 +114,7 @@ Function New-PBKDF2Key {
         $key = New-Object -TypeName byte[] -ArgumentList $Length
         $pass = [System.Runtime.InteropServices.Marshal]::SecureStringToGlobalAllocUnicode($Password)
         try {
-            $pass_str = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($pass)
+            $pass_str = [System.Runtime.InteropServices.Marshal]::PtrToStringUni($pass, $Password.Length)
             $pass_bytes = [System.Text.Encoding]::UTF8.GetBytes($pass_str)
             $res = Invoke-Win32Api -DllName Bcrypt.dll `
                 -MethodName BCryptDeriveKeyPBKDF2 `
